@@ -19,7 +19,7 @@ blueprint:
       description: Les types d'équipements à inclure dans le groupe
       selector:
         object:
-          domain: device_tracker
+          domain:
     include_keywords:
       name: Mots-clés à inclure
       description: Liste de mots-clés pour inclure les équipements
