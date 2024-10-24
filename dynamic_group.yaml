@@ -1,0 +1,67 @@
+blueprint:
+  name: Groupe dynamique d'équipements
+  description: |
+    Ce blueprint crée des groupes d'équipements dynamiques, les maintient à jour chaque heure,
+    permet de spécifier le nom et la description des groupes, d'ajouter des types d'équipements,
+    et d'utiliser des mots-clés pour inclure ou exclure des équipements.
+  domain: automation
+  input:
+    group_name:
+      name: Nom du groupe
+      description: Le nom du groupe d'équipements à créer
+      default: dynamic_group
+    group_description:
+      name: Description du groupe
+      description: La description du groupe d'équipements à créer
+      default: Description du groupe dynamique
+    device_domains:
+      name: Types d'équipements
+      description: Les types d'équipements à inclure dans le groupe
+      selector:
+        object:
+          domain: device_tracker
+    include_keywords:
+      name: Mots-clés à inclure
+      description: Liste de mots-clés pour inclure les équipements
+      selector:
+        text:
+          multiline: true
+    exclude_keywords:
+      name: Mots-clés à exclure
+      description: Liste de mots-clés pour exclure les équipements
+      selector:
+        text:
+          multiline: true
+
+trigger:
+  - platform: time_pattern
+    hours: "/1"
+
+variables:
+  include_list: !input include_keywords
+  exclude_list: !input exclude_keywords
+  domains: !input device_domains
+  entities: "{{ states | selectattr('domain','in',domains) | map(attribute='entity_id') | list }}"
+
+condition: "{{ any_include(entity, include_list) and not any_exclude(entity, exclude_list) }}"
+
+action:
+  - service: group.set
+    data:
+      object_id: !input 'group_name'
+      name: !input 'group_name'
+      entities: "{{ entities | select('any_include') | reject('any_exclude') | list }}"
+      icon: mdi:devices
+
+template:
+  any_include: >
+    {% for keyword in include_list.split('\n') %}
+    {% if keyword in entity %}true{% endif %}
+    {% endfor %}
+    false
+
+  any_exclude: >
+    {% for keyword in exclude_list.split('\n') %}
+    {% if keyword in entity %}true{% endif %}
+    {% endfor %}
+    false
