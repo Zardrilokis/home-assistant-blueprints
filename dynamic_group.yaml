@@ -3,7 +3,7 @@ blueprint:
   description: |
     Ce blueprint crée des groupes d'équipements dynamiques, les maintient à jour chaque heure,
     permet de spécifier le nom et la description des groupes, d'ajouter des types d'équipements,
-    et d'utiliser des mots-clés pour inclure ou exclure des équipements.
+    et d'utiliser des mots-clés pour inclure ou exclure des équipements, ainsi que d'ajouter des équipements manuellement.
   domain: automation
   input:
     group_name:
@@ -18,8 +18,8 @@ blueprint:
       name: Types d'équipements
       description: Les types d'équipements à inclure dans le groupe
       selector:
-        object:
-          domain:
+        text:
+          multiline: true
     include_keywords:
       name: Mots-clés à inclure
       description: Liste de mots-clés pour inclure les équipements
@@ -32,6 +32,18 @@ blueprint:
       selector:
         text:
           multiline: true
+    manual_include:
+      name: Ajouter manuellement des équipements à inclure
+      description: Liste des équipements à inclure manuellement
+      selector:
+        entity:
+          multiple: true
+    manual_exclude:
+      name: Ajouter manuellement des équipements à exclure
+      description: Liste des équipements à exclure manuellement
+      selector:
+        entity:
+          multiple: true
 
 trigger:
   - platform: time_pattern
@@ -41,9 +53,11 @@ variables:
   include_list: !input include_keywords
   exclude_list: !input exclude_keywords
   domains: !input device_domains
-  entities: "{{ states | selectattr('domain','in',domains) | map(attribute='entity_id') | list }}"
+  manual_include: !input manual_include
+  manual_exclude: !input manual_exclude
+  entities: "{{ states | selectattr('domain','in',domains.split('\n')) | map(attribute='entity_id') | list }}"
 
-condition: "{{ any_include(entity, include_list) and not any_exclude(entity, exclude_list) }}"
+condition: "{{ (any_include(entity, include_list) or entity in manual_include) and not (any_exclude(entity, exclude_list) or entity in manual_exclude) }}"
 
 action:
   - service: group.set
