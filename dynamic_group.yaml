@@ -50,14 +50,12 @@ blueprint:
       selector:
         target:
           entity:
-            multiple: true
     manual_exclude:
       name: Add manual devices list to exclude
       description: Liste des équipements à exclure manuellement
       selector:
         target:
           entity:
-            multiple: true
 
 trigger:
   - platform: time_pattern
