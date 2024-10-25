@@ -29,6 +29,12 @@ blueprint:
       selector:
         text: {}
       default: "This is the description of the dynamic group"
+    group_icon:
+      name: Group Icon
+      description: Icon to assign to the group. Example: mdi:lightbulb
+      default: mdi:lightbulb
+      selector:
+        icon: {}
     device_domains:
       name: Dynamic Domain List Available
       description: Liste des types d'équipements disponibles (Domain)
