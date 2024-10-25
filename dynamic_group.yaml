@@ -10,7 +10,7 @@ blueprint:
       name: Dynamic Group Name
       description: Le nom du groupe d'équipements à créer
       selector:
-        text
+        text:
       required: true
       default: dynamic_group
     group_description:
