@@ -7,30 +7,30 @@ blueprint:
   source_url: https://gist.github.com/mwolter805/965fb5c3b4d6bf8e9aeba8acd82fd224
   input:
     group_name:
-      name: Name to assign to the group. Example: All Lights
+      name: Name to assign to the group.
       default: Group Name
       selector:
         text: {}
     group_object_id:
-      name: object_id to assign to the group. Example: all_lights
+      name: object_id to assign to the group.
       default: group_id
       selector:
         text: {}
     search_domain:
       name: Dynamic Domain List
-      description: Domains to search. Format: List (-) of strings.
+      description: Domains to search.
       default: []
       selector:
         object: {}
     search_includes:
       name: Dynamic Include List
-      description: Entity object ID's to include. Format: List (-) of strings.
+      description: Entity object ID's to include.
       default: []
       selector:
         object: {}
     search_excludes:
       name: Dynamic Exclude List
-      description: Entity object ID's to exclude. Format: List (-) of strings.
+      description: Entity object ID's to exclude.
       default: []
       selector:
         object: {}
