@@ -2,7 +2,7 @@ blueprint:
   name: Groupe dynamique d'équipements
   description: |
     Ce blueprint crée des groupes d'équipements dynamiques, les maintient à jour chaque heure,
-    permet de spécifier le nom et la description des groupes, de générer une liste déroulante des types d'équipements disponibles,
+    permet de spécifier le nom, l'ID, et la pièce des groupes, de générer une liste déroulante des types d'équipements disponibles,
     et d'utiliser des mots-clés pour inclure ou exclure des équipements, ainsi que d'ajouter des équipements manuellement.
   domain: automation
   input:
@@ -11,13 +11,26 @@ blueprint:
       description: Le nom du groupe d'équipements à créer
       selector:
         text:
-      default: dynamic_group
+      default: "Dynamic Group Name"
       required: true
+    group_id:
+      name: Dynamic Group ID
+      description: L'ID du groupe d'équipements à créer
+      selector:
+        text:
+      default: "dynamic_group_name"
+      required: true
+    group_room:
+      name: Room Assignment
+      description: La pièce assignée au groupe d'équipements
+      selector:
+        area:
     group_description:
       name: This is the description of the dynamic group
       description: La description du groupe d'équipements à créer
       selector:
         text
+      default: "This is the description of the dynamic group"
     device_domains:
       name: Dynamic Domain List Available
       description: Liste des types d'équipements disponibles (Domain)
@@ -75,11 +88,12 @@ condition: "{{ (any_include(entity, include_list) or entity in manual_include) a
 action:
   - service: group.set
     data:
-      object_id: !input 'group_name'
+      object_id: !input 'group_id'
       name: !input 'group_name'
       description: !input 'group_description'
       entities: "{{ entities | select('any_include') | reject('any_exclude') | list }}"
       icon: mdi:devices
+      area_id: !input 'group_room'
 
 template:
   any_include: >
