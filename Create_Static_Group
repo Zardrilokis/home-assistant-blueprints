@@ -22,18 +22,34 @@ blueprint:
       default: mdi:lightbulb
       selector:
         icon: {}
-    domain_list:
-      name: Domain List
-      description: List of domains to include in the group
+    device_domains:
+      name: Dynamic Domain List Available
+      description: Liste des types d'équipements disponibles (Domain)
       selector:
-        list:
+        select:
           options:
-            - light
-            - switch
-            - sensor
-            - binary_sensor
-            - device_tracker
-            - media_player
+            - "automation"
+            - "binary_sensor"
+            - "climate"
+            - "cover"
+            - "device_tracker"
+            - "light"
+            - "media_player"
+            - "person"
+            - "scene"
+            - "select"
+            - "sensor"
+            - "Siren"
+            - "stt"
+            - "sun"
+            - "switch"
+            - "Tag"
+            - "todo"
+            - "tts"
+            - "Update"
+            - "water"
+            - "Weather"
+            - "Zone"
       default: "light"
   action:
     - service: group.set
