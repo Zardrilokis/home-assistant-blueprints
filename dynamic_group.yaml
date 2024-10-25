@@ -19,19 +19,19 @@ blueprint:
       description: Liste des types d'équipements disponibles (Domain)
       selector:
         object:
-          domain: device_tracker
+          domain:
           multiple: true
     include_keywords:
       name: Dynamic Include key word List
       description: Liste de mots-clés pour inclure les équipements
       selector:
-        text:
+        object:
           multiline: true
     exclude_keywords:
       name: Dynamic key word to exclude from the list
       description: Liste de mots-clés pour exclure les équipements
       selector:
-        text:
+        object:
           multiline: true
     manual_include:
       name: Add manual devices list to include
