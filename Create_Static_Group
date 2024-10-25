@@ -1,0 +1,47 @@
+blueprint:
+  name: Create Group Based on Domain List
+  description: |
+    This blueprint creates a group based on a list of domains specified in YAML.
+  domain: automation
+  input:
+    group_name:
+      name: Group Name
+      description: The name of the group to create
+      selector:
+        text: {}
+      default: "My Group"
+      required: true
+    group_id:
+      name: Group ID
+      description: The ID of the group to create
+      selector:
+        text: {}
+      default: "my_group"
+      required: true
+    group_icon:
+      name: Group Icon
+      description: 'Icon to assign to the group. Example: mdi:lightbulb'
+      default: mdi:lightbulb
+      selector:
+        icon: {}
+    domain_list:
+      name: Domain List
+      description: List of domains to include in the group
+      selector:
+        list:
+          options:
+            - light
+            - switch
+            - sensor
+            - binary_sensor
+            - device_tracker
+            - media_player
+      default: "light"
+  action:
+    - service: group.set
+      data_template:
+        object_id: "{{ group_id }}"
+        name: "{{ group_name }}"
+        entities: >
+          {% set entities = states | selectattr('domain', 'in', domain_list) | map(attribute='entity_id') | list %}
+          {{ entities }}
