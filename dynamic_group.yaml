@@ -1,88 +1,96 @@
 blueprint:
-  name: Create Group
-  description:
-    # Create Group Blueprint
-    This blueprint creates a group with either static or dynamic members
+  name: Groupe dynamique d'équipements
+  description: |
+    Ce blueprint crée des groupes d'équipements dynamiques, les maintient à jour chaque heure,
+    permet de spécifier le nom, l'ID, et la pièce des groupes, de générer une liste déroulante des types d'équipements disponibles,
+    et d'utiliser des mots-clés pour inclure ou exclure des équipements, ainsi que d'ajouter des équipements manuellement.
   domain: automation
-  source_url: https://gist.github.com/mwolter805/965fb5c3b4d6bf8e9aeba8acd82fd224
   input:
     group_name:
-      name: Name to assign to the group
-      default: Group Name
+      name: Dynamic Group Name
+      description: Le nom du groupe d'équipements à créer
       selector:
         text: {}
-    group_object_id:
-      name: object_id to assign to the group
-      default: group_id
+      default: "Dynamic Group Name"
+    group_id:
+      name: Dynamic Group ID
+      description: L'ID du groupe d'équipements à créer
       selector:
         text: {}
-    search_domain:
-      name: Dynamic Domain List
-      description: Domains to search
-      default: []
+      default: "dynamic_group_name"
+    group_room:
+      name: Room Assignment
+      description: La pièce assignée au groupe d'équipements
       selector:
-        object: {}
-    search_includes:
-      name: Dynamic Include List
-      description: Entity object ID's to include
-      default: []
+        area: {}
+    group_description:
+      name: This is the description of the dynamic group
+      description: La description du groupe d'équipements à créer
       selector:
-        object: {}
-    search_excludes:
-      name: Dynamic Exclude List
-      description: Entity object ID's to exclude
-      default: []
+        text: {}
+      default: "This is the description of the dynamic group"
+    device_domains:
+      name: Dynamic Domain List Available
+      description: Liste des types d'équipements disponibles (Domain)
       selector:
-        object: {}
-    entities_to_add:
-      name: Static Entities To Add
-      description: Select the entities to add to the group
-      default: []
+        select:
+          options:
+            - "light"
+            - "switch"
+            - "sensor"
+            - "binary_sensor"
+            - "device_tracker"
+            - "media_player"
+      default: "light"
+    include_keywords:
+      name: Dynamic Include key word List
+      description: Liste de mots-clés pour inclure les équipements
+      selector:
+        text:
+          multiline: true
+      default: "- "
+    exclude_keywords:
+      name: Dynamic key word to exclude from the list
+      description: Liste de mots-clés pour exclure les équipements
+      selector:
+        text:
+          multiline: true
+      default: "- "
+    manual_include:
+      name: Add manual devices list to include
+      description: Liste des équipements à inclure manuellement
       selector:
         entity:
           multiple: true
-    entities_to_remove:
-      name: Static Entities To Remove
-      description: Select the entities to remove from the group
-      default: []
+    manual_exclude:
+      name: Add manual devices list to exclude
+      description: Liste des équipements à exclure manuellement
       selector:
         entity:
           multiple: true
-mode: single
-max_exceeded: silent
 
 trigger:
-  - platform: homeassistant
-    event: start
-  - platform: event
-    event_type: call_service
-    event_data:
-      domain: group
-      service: reload
+  - platform: time_pattern
+    hours: "/1"
 
 variables:
-  input_group_name: !input group_name
-  input_group_group_object_id: !input group_object_id
-  domains: !input search_domain
-  includes: !input search_includes
-  excludes: !input search_excludes
-  add: !input entities_to_add
-  rem: !input entities_to_remove
+  include_list: !input include_keywords
+  exclude_list: !input exclude_keywords
+  domains: !input device_domains
+  manual_include: !input manual_include
+  manual_exclude: !input manual_exclude
+  entities: "{{ states | selectattr('domain','in',domains.split('\n')) | map(attribute='entity_id') | list }}"
+
+condition:
+  condition: template
+  value_template: "{{ (include_list | trim | length == 0 or entity_id in include_list | regex_findall(find='(.*)', ignorecase=True)) and not (exclude_list | trim | length != 0 and entity_id in exclude_list | regex_findall(find='(.*)', ignorecase=True)) }}"
 
 action:
   - service: group.set
-    data_template:
-      name: '{{ input_group_name }}'
-      object_id: '{{ input_group_group_object_id }}'
-      entities: >
-        {%- set entities = states | selectattr('domain','in', domains) | list if domains else states | list if ( includes or excludes ) %}
-        {%- set ns = namespace(include=[], exclude=[]) %}
-        {%- for item in includes %}
-          {%- set ns.include = ns.include + entities | selectattr('object_id', 'search', item) | list %}
-        {%- endfor %}
-        {%- for item in excludes %}
-          {%- set ns.exclude = ns.exclude + entities | selectattr('object_id', 'search', item) | list %}
-        {%- endfor %}
-        {%- set entities = entities | select('in', ns.include if includes else entities ) | reject('in', ns.exclude) | map(attribute="entity_id") | list %}
-        {%- set entities = ( entities + add.entity_id | list ) | reject('in', rem.entity_id) | list %}
-        {{ entities | unique | sort }}
+    data:
+      object_id: !input 'group_id'
+      name: !input 'group_name'
+      description: !input 'group_description'
+      entities: "{{ entities }}"
+      icon: mdi:devices
+      area_id: !input 'group_room'
