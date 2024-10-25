@@ -1,49 +1,49 @@
 blueprint:
   name: Create Group
-  description: |
+  description:
     # Create Group Blueprint
-    This blueprint creates a group with either static or dynamic members.
+    This blueprint creates a group with either static or dynamic members
   domain: automation
   source_url: https://gist.github.com/mwolter805/965fb5c3b4d6bf8e9aeba8acd82fd224
   input:
     group_name:
-      name: Name to assign to the group.
+      name: Name to assign to the group
       default: Group Name
       selector:
         text: {}
     group_object_id:
-      name: object_id to assign to the group.
+      name: object_id to assign to the group
       default: group_id
       selector:
         text: {}
     search_domain:
       name: Dynamic Domain List
-      description: Domains to search.
+      description: Domains to search
       default: []
       selector:
         object: {}
     search_includes:
       name: Dynamic Include List
-      description: Entity object ID's to include.
+      description: Entity object ID's to include
       default: []
       selector:
         object: {}
     search_excludes:
       name: Dynamic Exclude List
-      description: Entity object ID's to exclude.
+      description: Entity object ID's to exclude
       default: []
       selector:
         object: {}
     entities_to_add:
       name: Static Entities To Add
-      description: Select the entities to add to the group.
+      description: Select the entities to add to the group
       default: []
       selector:
         entity:
           multiple: true
     entities_to_remove:
       name: Static Entities To Remove
-      description: Select the entities to remove from the group.
+      description: Select the entities to remove from the group
       default: []
       selector:
         entity:
