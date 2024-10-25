@@ -35,27 +35,32 @@ blueprint:
     include_keywords:
       name: Dynamic Include key word List
       description: Liste de mots-clés pour inclure les équipements
+      default: []
       selector:
-        text:
-          multiline: true
+        object: {}
     exclude_keywords:
       name: Dynamic key word to exclude from the list
       description: Liste de mots-clés pour exclure les équipements
+      default: []
       selector:
-        text:
-          multiline: true
+        object: {}
     manual_include:
       name: Add manual devices list to include
       description: Liste des équipements à inclure manuellement
+      default: []
+        entity_id: []
       selector:
         target:
           entity:
+          - {}
     manual_exclude:
       name: Add manual devices list to exclude
       description: Liste des équipements à exclure manuellement
+      default: []
       selector:
         target:
           entity:
+          - {}
 
 trigger:
   - platform: time_pattern
