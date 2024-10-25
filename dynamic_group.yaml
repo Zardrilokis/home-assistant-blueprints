@@ -12,12 +12,12 @@ blueprint:
       selector:
         text:
       default: dynamic_group
+      required: true
     group_description:
       name: This is the description of the dynamic group
       description: La description du groupe d'équipements à créer
       selector:
-        text:
-      default: This is the description of the Dynamic group 
+        text
     device_domains:
       name: Dynamic Domain List Available
       description: Liste des types d'équipements disponibles (Domain)
@@ -30,38 +30,33 @@ blueprint:
             - "binary_sensor"
             - "device_tracker"
             - "media_player"
-            - "automation"
-            - "scene"
+      default: "light"
     include_keywords:
       name: Dynamic Include key word List
       description: Liste de mots-clés pour inclure les équipements
-      default: []
       selector:
-        object: {}
+        text:
+          multiline: true
+      default: "- "
     exclude_keywords:
       name: Dynamic key word to exclude from the list
       description: Liste de mots-clés pour exclure les équipements
-      default: []
       selector:
-        object: {}
+        text:
+          multiline: true
+      default: "- "
     manual_include:
       name: Add manual devices list to include
       description: Liste des équipements à inclure manuellement
-      default:
-        entity_id: []
       selector:
-        target:
-          entity:
-          - {}
+        entity:
+          multiple: true
     manual_exclude:
       name: Add manual devices list to exclude
       description: Liste des équipements à exclure manuellement
-      default:
-        entity_id: []
       selector:
-        target:
-          entity:
-          - {}
+        entity:
+          multiple: true
 
 trigger:
   - platform: time_pattern
