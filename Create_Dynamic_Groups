@@ -1,0 +1,113 @@
+blueprint:
+  name: Create Dynamic Groupe based on automation
+  description: |
+    Ce blueprint crée des groupes d'équipements dynamiques, les maintient à jour chaque heure,
+    permet de spécifier le nom, l'ID, et la pièce des groupes, de générer une liste déroulante des types d'équipements disponibles,
+    et d'utiliser des mots-clés pour inclure ou exclure des équipements, ainsi que d'ajouter des équipements manuellement.
+  domain: automation
+  input:
+    group_name:
+      name: Dynamic Group Name
+      description: Le nom du groupe d'équipements à créer
+      selector:
+        text: {}
+      default: "Dynamic Group Name"
+    group_id:
+      name: Dynamic Group ID
+      description: L'ID du groupe d'équipements à créer
+      selector:
+        text: {}
+      default: "dynamic_group_name"
+    group_room:
+      name: Room Assignment
+      description: La pièce assignée au groupe d'équipements
+      selector:
+        area: {}
+    group_description:
+      name: This is the description of the dynamic group
+      description: La description du groupe d'équipements à créer
+      selector:
+        text: {}
+      default: "This is the description of the dynamic group"
+    device_domains:
+      name: Dynamic Domain List Available
+      description: Liste des types d'équipements disponibles (Domain)
+      selector:
+        select:
+          options:
+            - "automation"
+            - "binary_sensor"
+            - "climate"
+            - "cover"
+            - "device_tracker"
+            - "light"
+            - "media_player"
+            - "person"
+            - "scene"
+            - "select"
+            - "sensor"
+            - "Siren"
+            - "stt"
+            - "sun"
+            - "switch"
+            - "Tag"
+            - "todo"
+            - "tts"
+            - "Update"
+            - "water"
+            - "Weather"
+            - "Zone"
+
+      default: "light"
+    include_keywords:
+      name: Dynamic Include key word List
+      description: Liste de mots-clés pour inclure les équipements
+      selector:
+        text:
+          multiline: true
+      default: "- "
+    exclude_keywords:
+      name: Dynamic key word to exclude from the list
+      description: Liste de mots-clés pour exclure les équipements
+      selector:
+        text:
+          multiline: true
+      default: "- "
+    manual_include:
+      name: Add manual devices list to include
+      description: Liste des équipements à inclure manuellement
+      selector:
+        entity:
+          multiple: true
+    manual_exclude:
+      name: Add manual devices list to exclude
+      description: Liste des équipements à exclure manuellement
+      selector:
+        entity:
+          multiple: true
+
+trigger:
+  - platform: time_pattern
+    hours: "/1"
+
+variables:
+  include_list: !input include_keywords
+  exclude_list: !input exclude_keywords
+  domains: !input device_domains
+  manual_include: !input manual_include
+  manual_exclude: !input manual_exclude
+  entities: "{{ states | selectattr('domain','in',domains.split('\n')) | map(attribute='entity_id') | list }}"
+
+condition:
+  condition: template
+  value_template: "{{ (include_list | trim | length == 0 or entity_id in include_list | regex_findall(find='(.*)', ignorecase=True)) and not (exclude_list | trim | length != 0 and entity_id in exclude_list | regex_findall(find='(.*)', ignorecase=True)) }}"
+
+action:
+  - service: group.set
+    data:
+      object_id: !input 'group_id'
+      name: !input 'group_name'
+      description: !input 'group_description'
+      entities: "{{ entities }}"
+      icon: mdi:devices
+      area_id: !input 'group_room'
