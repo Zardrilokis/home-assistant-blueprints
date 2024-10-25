@@ -10,24 +10,24 @@ blueprint:
       name: Dynamic Group Name
       description: Le nom du groupe d'équipements à créer
       selector:
-        text:
+        text: {}
       default: "Dynamic Group Name"
     group_id:
       name: Dynamic Group ID
       description: L'ID du groupe d'équipements à créer
       selector:
-        text:
+        text: {}
       default: "dynamic_group_name"
     group_room:
       name: Room Assignment
       description: La pièce assignée au groupe d'équipements
       selector:
-        area:
+        area: {}
     group_description:
       name: This is the description of the dynamic group
       description: La description du groupe d'équipements à créer
       selector:
-        text:
+        text: {}
       default: "This is the description of the dynamic group"
     device_domains:
       name: Dynamic Domain List Available
