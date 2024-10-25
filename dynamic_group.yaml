@@ -12,14 +12,12 @@ blueprint:
       selector:
         text: {}
       default: "Dynamic Group Name"
-      required: true
     group_id:
       name: Dynamic Group ID
       description: L'ID du groupe d'équipements à créer
       selector:
         text: {}
       default: "dynamic_group_name"
-      required: true
     group_room:
       name: Room Assignment
       description: La pièce assignée au groupe d'équipements
