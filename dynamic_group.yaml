@@ -12,7 +12,6 @@ blueprint:
       selector:
         text:
       default: dynamic_group
-      required: true
     group_description:
       name: This is the description of the dynamic group
       description: La description du groupe d'équipements à créer
