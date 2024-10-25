@@ -12,12 +12,14 @@ blueprint:
       selector:
         text:
       default: "Dynamic Group Name"
+      required: true
     group_id:
       name: Dynamic Group ID
       description: L'ID du groupe d'équipements à créer
       selector:
         text:
       default: "dynamic_group_name"
+      required: true
     group_room:
       name: Room Assignment
       description: La pièce assignée au groupe d'équipements
@@ -27,7 +29,7 @@ blueprint:
       name: This is the description of the dynamic group
       description: La description du groupe d'équipements à créer
       selector:
-        text:
+        text
       default: "This is the description of the dynamic group"
     device_domains:
       name: Dynamic Domain List Available
@@ -81,7 +83,9 @@ variables:
   manual_exclude: !input manual_exclude
   entities: "{{ states | selectattr('domain','in',domains.split('\n')) | map(attribute='entity_id') | list }}"
 
-condition: "{{ (any_include(entity, include_list) or entity in manual_include) and not (any_exclude(entity, exclude_list) or entity in manual_exclude) }}"
+condition:
+  condition: template
+  value_template: "{{ (include_list | trim | length == 0 or entity_id in include_list | regex_findall(find='(.*)', ignorecase=True)) and not (exclude_list | trim | length != 0 and entity_id in exclude_list | regex_findall(find='(.*)', ignorecase=True)) }}"
 
 action:
   - service: group.set
@@ -89,19 +93,6 @@ action:
       object_id: !input 'group_id'
       name: !input 'group_name'
       description: !input 'group_description'
-      entities: "{{ entities | select('any_include') | reject('any_exclude') | list }}"
+      entities: "{{ entities }}"
       icon: mdi:devices
       area_id: !input 'group_room'
-
-template:
-  any_include: >
-    {% for keyword in include_list.split('\n') %}
-    {% if keyword in entity %}true{% endif %}
-    {% endfor %}
-    false
-
-  any_exclude: >
-    {% for keyword in exclude_list.split('\n') %}
-    {% if keyword in entity %}true{% endif %}
-    {% endfor %}
-    false
