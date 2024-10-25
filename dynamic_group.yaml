@@ -47,7 +47,7 @@ blueprint:
     manual_include:
       name: Add manual devices list to include
       description: Liste des équipements à inclure manuellement
-      default: []
+      default:
         entity_id: []
       selector:
         target:
@@ -56,7 +56,8 @@ blueprint:
     manual_exclude:
       name: Add manual devices list to exclude
       description: Liste des équipements à exclure manuellement
-      default: []
+      default:
+        entity_id: []
       selector:
         target:
           entity:
