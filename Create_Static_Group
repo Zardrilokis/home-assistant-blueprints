@@ -10,14 +10,12 @@ blueprint:
       selector:
         text: {}
       default: "My Group"
-      required: true
     group_id:
       name: Group ID
       description: The ID of the group to create
       selector:
         text: {}
       default: "my_group"
-      required: true
     group_icon:
       name: Group Icon
       description: 'Icon to assign to the group. Example: mdi:lightbulb'
