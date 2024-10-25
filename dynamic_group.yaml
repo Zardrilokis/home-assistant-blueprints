@@ -2,44 +2,45 @@ blueprint:
   name: Groupe dynamique d'équipements
   description: |
     Ce blueprint crée des groupes d'équipements dynamiques, les maintient à jour chaque heure,
-    permet de spécifier le nom et la description des groupes, d'ajouter des types d'équipements,
+    permet de spécifier le nom et la description des groupes, de générer une liste des types d'équipements disponibles,
     et d'utiliser des mots-clés pour inclure ou exclure des équipements, ainsi que d'ajouter des équipements manuellement.
   domain: automation
   input:
     group_name:
-      name: Nom du groupe
+      name: Dynamic Group Name
       description: Le nom du groupe d'équipements à créer
       default: dynamic_group
     group_description:
-      name: Description du groupe
+      name: This is the description of the dynamic group
       description: La description du groupe d'équipements à créer
       default: Description du groupe dynamique
     device_domains:
-      name: Types d'équipements
-      description: Les types d'équipements à inclure dans le groupe
+      name: Dynamic Domain List
+      description: Liste des types d'équipements disponibles (Domain)
       selector:
-        text:
-          multiline: true
+        object:
+          domain: device_tracker
+          multiple: true
     include_keywords:
-      name: Mots-clés à inclure
+      name: Dynamic Include key word List
       description: Liste de mots-clés pour inclure les équipements
       selector:
         text:
           multiline: true
     exclude_keywords:
-      name: Mots-clés à exclure
+      name: Dynamic key word to exclude from the list
       description: Liste de mots-clés pour exclure les équipements
       selector:
         text:
           multiline: true
     manual_include:
-      name: Ajouter manuellement des équipements à inclure
+      name: Add manual devices list to include
       description: Liste des équipements à inclure manuellement
       selector:
         entity:
           multiple: true
     manual_exclude:
-      name: Ajouter manuellement des équipements à exclure
+      name: Add manual devices list to exclude
       description: Liste des équipements à exclure manuellement
       selector:
         entity:
@@ -55,7 +56,7 @@ variables:
   domains: !input device_domains
   manual_include: !input manual_include
   manual_exclude: !input manual_exclude
-  entities: "{{ states | selectattr('domain','in',domains.split('\n')) | map(attribute='entity_id') | list }}"
+  entities: "{{ states | selectattr('domain','in',domains) | map(attribute='entity_id') | list }}"
 
 condition: "{{ (any_include(entity, include_list) or entity in manual_include) and not (any_exclude(entity, exclude_list) or entity in manual_exclude) }}"
 
@@ -64,6 +65,7 @@ action:
     data:
       object_id: !input 'group_name'
       name: !input 'group_name'
+      description: !input 'group_description'
       entities: "{{ entities | select('any_include') | reject('any_exclude') | list }}"
       icon: mdi:devices
 
