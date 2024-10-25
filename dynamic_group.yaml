@@ -27,7 +27,7 @@ blueprint:
       name: This is the description of the dynamic group
       description: La description du groupe d'équipements à créer
       selector:
-        text
+        text:
       default: "This is the description of the dynamic group"
     device_domains:
       name: Dynamic Domain List Available
