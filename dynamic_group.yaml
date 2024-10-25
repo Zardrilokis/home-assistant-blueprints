@@ -73,28 +73,20 @@ trigger:
   - platform: time_pattern
     hours: "/1"
 
-variables:
-  include_list: !input include_keywords
-  exclude_list: !input exclude_keywords
-  domains: !input device_domains
-  manual_include: !input manual_include
-  manual_exclude: !input manual_exclude
-  entities: >
-    {% set include_list = include_list.split('\n') %}
-    {% set exclude_list = exclude_list.split('\n') %}
-    {% set domain_list = domains.split('\n') %}
-    {{ states | selectattr('entity_id', 'in', manual_include) | map(attribute='entity_id') | list + 
-       (states | selectattr('entity_id', 'not_in', manual_exclude) | selectattr('domain', 'in', domain_list) | 
-       selectattr('entity_id', 'search', '(' + '|'.join(include_list) + ')') | 
-       rejectattr('entity_id', 'search', '(' + '|'.join(exclude_list) + ')') | 
-       map(attribute='entity_id') | list) }}
-
 action:
   - service: group.set
     data:
       object_id: !input group_id
       name: !input group_name
       description: !input group_description
-      entities: "{{ entities }}"
+      entities: >
+        {% set include_list = include_keywords.split('\n') %}
+        {% set exclude_list = exclude_keywords.split('\n') %}
+        {% set domain_list = device_domains %}
+        {{ states | selectattr('entity_id', 'in', manual_include) | map(attribute='entity_id') | list + 
+           (states | selectattr('entity_id', 'not_in', manual_exclude) | selectattr('domain', 'eq', domain_list) | 
+           selectattr('entity_id', 'match', '(' + '|'.join(include_list) + ')') | 
+           rejectattr('entity_id', 'match', '(' + '|'.join(exclude_list) + ')') | 
+           map(attribute='entity_id') | list) }}
       icon: mdi:devices
       area_id: !input group_room
