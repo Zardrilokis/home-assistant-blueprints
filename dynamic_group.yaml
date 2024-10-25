@@ -17,6 +17,7 @@ blueprint:
       description: La description du groupe d'équipements à créer
       selector:
         text:
+      default: This is the description of the Dynamic group 
     device_domains:
       name: Dynamic Domain List Available
       description: Liste des types d'équipements disponibles (Domain)
@@ -29,6 +30,8 @@ blueprint:
             - "binary_sensor"
             - "device_tracker"
             - "media_player"
+            - "automation"
+            - "scene"
     include_keywords:
       name: Dynamic Include key word List
       description: Liste de mots-clés pour inclure les équipements
