@@ -10,7 +10,8 @@ blueprint:
       name: Dynamic Group Name
       description: Le nom du groupe d'équipements à créer
       selector:
-        text:
+        text
+      required: true
       default: dynamic_group
     group_description:
       name: This is the description of the dynamic group
@@ -47,12 +48,14 @@ blueprint:
       selector:
         entity:
           multiple: true
+      required: false
     manual_exclude:
       name: Add manual devices list to exclude
       description: Liste des équipements à exclure manuellement
       selector:
         entity:
           multiple: true
+      required: false
 
 trigger:
   - platform: time_pattern
