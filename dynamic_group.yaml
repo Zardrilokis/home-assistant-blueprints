@@ -6,12 +6,14 @@ blueprint:
   domain: automation
   input:
     group_name:
-      name: Name to assign to the group. Example: All Lights
+      name: Name to assign to the group
+      description: 'Example: All Lights'
       default: Group Name
       selector:
         text: {}
     group_object_id:
-      name: object_id to assign to the group. Example: all_lights
+      name: object_id to assign to the group
+      description: 'Example: all_lights'
       default: group_id
       selector:
         text: {}
