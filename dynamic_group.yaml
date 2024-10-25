@@ -48,14 +48,16 @@ blueprint:
       name: Add manual devices list to include
       description: Liste des équipements à inclure manuellement
       selector:
-        entity:
-          multiple: true
+        target:
+          entity:
+            multiple: true
     manual_exclude:
       name: Add manual devices list to exclude
       description: Liste des équipements à exclure manuellement
       selector:
-        entity:
-          multiple: true
+        target:
+          entity:
+            multiple: true
 
 trigger:
   - platform: time_pattern
