@@ -1,6 +1,9 @@
 blueprint:
   name: Groupe dynamique d'équipements
-  description: Crée et met à jour dynamiquement des groupes d'équipements chaque heure.
+  description: |
+    Ce blueprint crée des groupes d'équipements dynamiques, les maintient à jour chaque heure,
+    permet de spécifier le nom, l'ID, et la pièce des groupes, de générer une liste déroulante des types d'équipements disponibles,
+    et d'utiliser des mots-clés pour inclure ou exclure des équipements, ainsi que d'ajouter des équipements manuellement.
   domain: automation
   input:
     group_name:
@@ -9,12 +12,14 @@ blueprint:
       selector:
         text: {}
       default: "Dynamic Group Name"
+      required: true
     group_id:
       name: Dynamic Group ID
       description: L'ID du groupe d'équipements à créer
       selector:
         text: {}
       default: "dynamic_group_name"
+      required: true
     group_room:
       name: Room Assignment
       description: La pièce assignée au groupe d'équipements
@@ -70,6 +75,14 @@ trigger:
   - platform: time_pattern
     hours: "/1"
 
+variables:
+  include_list: !input include_keywords
+  exclude_list: !input exclude_keywords
+  domains: !input device_domains
+  manual_include: !input manual_include
+  manual_exclude: !input manual_exclude
+  entities: "{{ states | selectattr('domain','in',domains.split('\n')) | map(attribute='entity_id') | list }}"
+
 action:
   - service: group.set
     data:
@@ -77,9 +90,9 @@ action:
       name: !input group_name
       description: !input group_description
       entities: >
-        {% set include_list = (include_keywords).split('\n') %}
-        {% set exclude_list = (exclude_keywords).split('\n') %}
-        {% set domain_list = (device_domains).split('\n') %}
+        {% set include_list = include_list.split('\n') %}
+        {% set exclude_list = exclude_list.split('\n') %}
+        {% set domain_list = domains.split('\n') %}
         {{ states | selectattr('entity_id', 'in', manual_include) | map(attribute='entity_id') | list + 
            (states | selectattr('entity_id', 'not_in', manual_exclude) | selectattr('domain', 'in', domain_list) | 
            selectattr('entity_id', 'match', '(' + '|'.join(include_list) + ')') | 
