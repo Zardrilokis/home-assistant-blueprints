@@ -9,7 +9,7 @@ blueprint:
       selector:
         device:
           integration: zha
-          manufacturer: Smart
+          manufacturer: Tuya
           model: Smart Zigbee M1 Switch (unsupported)
     bouton_1_action:
       name: Action pour le Bouton 1
