@@ -52,7 +52,7 @@ blueprint:
             - "zone"
       default: "light"
   action:
-    - service: group.set
+    - service: group.create
       data:
         object_id: "{{ group_id }}"
         name: "{{ group_name }}"
