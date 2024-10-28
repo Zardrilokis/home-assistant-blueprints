@@ -24,7 +24,7 @@ blueprint:
         icon: {}
     device_domains:
       name: Dynamic Domain List Available
-      description: Liste des types d'équipements disponibles (Domain)
+      description: List of available device domains to include in the group
       selector:
         select:
           options:
@@ -39,23 +39,25 @@ blueprint:
             - "scene"
             - "select"
             - "sensor"
-            - "Siren"
+            - "siren"
             - "stt"
             - "sun"
             - "switch"
-            - "Tag"
+            - "tag"
             - "todo"
             - "tts"
-            - "Update"
+            - "update"
             - "water"
-            - "Weather"
-            - "Zone"
+            - "weather"
+            - "zone"
       default: "light"
   action:
     - service: group.set
-      data_template:
+      data:
         object_id: "{{ group_id }}"
         name: "{{ group_name }}"
+        icon: "{{ group_icon }}"
         entities: >
-          {% set entities = states | selectattr('domain', 'in', domain_list) | map(attribute='entity_id') | list %}
+          {% set domains = [device_domains] if device_domains is string else device_domains %}
+          {% set entities = states | selectattr('domain', 'in', domains) | map(attribute='entity_id') | list %}
           {{ entities }}
