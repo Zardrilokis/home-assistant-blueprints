@@ -2,10 +2,8 @@ blueprint:
   name: Create Dynamic Groupe based on automation
   description: 'Ce blueprint crée des groupes d''équipements dynamiques, les maintient
     à jour chaque heure,
-
     permet de spécifier le nom, l''ID, et la pièce des groupes, de générer une liste
     déroulante des types d''équipements disponibles,
-
     et d''utiliser des mots-clés pour inclure ou exclure des équipements, ainsi que
     d''ajouter des équipements manuellement.
     '
@@ -102,9 +100,11 @@ blueprint:
           multiple: true
       default: ''
   source_url: https://github.com/Zardrilokis/home-assistant-blueprints-Generate-Dynamic-Groups/blob/f29bd824a1a890c309a88bdbbea01fafaf7fb965/Create_Dynamic_Groups
+
 trigger:
-- platform: time_pattern
-  hours: /1
+  - platform: time_pattern
+    hours: /1
+
 variables:
   include_list: !input include_keywords
   exclude_list: !input exclude_keywords
@@ -112,19 +112,20 @@ variables:
   manual_include: !input manual_include
   manual_exclude: !input manual_exclude
   entities: '{{ states | selectattr(''domain'',''in'',domains.split(''
-
     '')) | map(attribute=''entity_id'') | list }}'
+
 condition:
   condition: template
   value_template: '{{ (include_list | trim | length == 0 or entity_id in include_list
     | regex_findall(find=''(.*)'', ignorecase=True)) and not (exclude_list | trim
     | length != 0 and entity_id in exclude_list | regex_findall(find=''(.*)'', ignorecase=True))
     }}'
+
 action:
-- service: group.set
-  data:
-    object_id: !input group_id
-    name: !input group_name
-    entities: '{{ entities }}'
-    icon: mdi:devices
-    area_id: !input group_room
+  - service: group.set
+    data:
+      object_id: !input group_id
+      name: !input group_name
+      entities: '{{ entities }}'
+      icon: mdi:devices
+      area_id: !input group_room
