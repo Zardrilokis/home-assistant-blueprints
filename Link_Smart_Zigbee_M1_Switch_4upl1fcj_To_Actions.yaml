@@ -3,13 +3,15 @@ blueprint:
   description: "Contrôle des boutons du Smart Zigbee M1 Switch pour activer des actions spécifiques."
   domain: automation
   input:
-    zigbee_device:
-      name: Interrupteur Zigbee
-      description: "Choisissez le Smart Zigbee M1 Switch (4upl1fcj)."
+    tuya_device:
+      name: Interrupteur Tuya Zigbee
+      description: "Choisissez le Smart Zigbee M1 Switch (4upl1fcj) sous l'intégration Tuya."
       selector:
         device:
-          integration: Tuya
-          manufacturer: Tuya
+          integration: tuya
+          entity:
+            domain: sensor
+            device_class: wxkg
     bouton_1_action:
       name: Action pour le Bouton 1
       description: "Choisissez l'action pour le Bouton 1."
@@ -39,9 +41,9 @@ mode: restart
 
 trigger:
   - platform: event
-    event_type: zha_event
+    event_type: tuya_event
     event_data:
-      device_id: !input zigbee_device
+      device_id: !input tuya_device
 
 action:
   - variables:
