@@ -8,7 +8,7 @@ blueprint:
       description: "Choisissez le Smart Zigbee M1 Switch (4upl1fcj)."
       selector:
         device:
-          integration: zha
+          integration: Tuya
           manufacturer: Tuya
     bouton_1_action:
       name: Action pour le Bouton 1
