@@ -71,35 +71,35 @@ blueprint:
       description: Action to run on button 4 (upper-left)
       selector:
         action: {}
-  trigger:
-    - platform: state
-      entity_id: !input switch
-      attribute: action
-  action:
-    - variables:
-        command: "{{ trigger.to_state.state }}"
-    - choose:
-        - conditions: "{{ command == '1_single' }}"
-          sequence: !input button_one_short_press
-        - conditions: "{{ command == '1_double' }}"
-          sequence: !input button_one_double_press
-        - conditions: "{{ command == '1_hold' }}"
-          sequence: !input button_one_long_press
-        - conditions: "{{ command == '2_single' }}"
-          sequence: !input button_two_short_press
-        - conditions: "{{ command == '2_double' }}"
-          sequence: !input button_two_double_press
-        - conditions: "{{ command == '2_hold' }}"
-          sequence: !input button_two_long_press
-        - conditions: "{{ command == '3_single' }}"
-          sequence: !input button_three_short_press
-        - conditions: "{{ command == '3_double' }}"
-          sequence: !input button_three_double_press
-        - conditions: "{{ command == '3_hold' }}"
-          sequence: !input button_three_long_press
-        - conditions: "{{ command == '4_single' }}"
-          sequence: !input button_four_short_press
-        - conditions: "{{ command == '4_double' }}"
-          sequence: !input button_four_double_press
-        - conditions: "{{ command == '4_hold' }}"
-          sequence: !input button_four_long_press
+trigger:
+  - platform: state
+    entity_id: !input 'switch'
+    attribute: action
+action:
+  - variables:
+      command: "{{ trigger.to_state.state }}"
+  - choose:
+      - conditions: "{{ command == '1_single' }}"
+        sequence: !input 'button_one_short_press'
+      - conditions: "{{ command == '1_double' }}"
+        sequence: !input 'button_one_double_press'
+      - conditions: "{{ command == '1_hold' }}"
+        sequence: !input 'button_one_long_press'
+      - conditions: "{{ command == '2_single' }}"
+        sequence: !input 'button_two_short_press'
+      - conditions: "{{ command == '2_double' }}"
+        sequence: !input 'button_two_double_press'
+      - conditions: "{{ command == '2_hold' }}"
+        sequence: !input 'button_two_long_press'
+      - conditions: "{{ command == '3_single' }}"
+        sequence: !input 'button_three_short_press'
+      - conditions: "{{ command == '3_double' }}"
+        sequence: !input 'button_three_double_press'
+      - conditions: "{{ command == '3_hold' }}"
+        sequence: !input 'button_three_long_press'
+      - conditions: "{{ command == '4_single' }}"
+        sequence: !input 'button_four_short_press'
+      - conditions: "{{ command == '4_double' }}"
+        sequence: !input 'button_four_double_press'
+      - conditions: "{{ command == '4_hold' }}"
+        sequence: !input 'button_four_long_press'
