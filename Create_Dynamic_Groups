@@ -128,4 +128,3 @@ action:
       name: !input group_name
       entities: '{{ entities }}'
       icon: mdi:devices
-      area_id: !input group_room
