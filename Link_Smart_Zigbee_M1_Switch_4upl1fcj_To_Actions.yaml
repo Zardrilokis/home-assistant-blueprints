@@ -10,7 +10,7 @@ blueprint:
         device:
           integration: zha
           manufacturer: Smart
-          model: 4upl1fcj
+          model: Smart Zigbee M1 Switch (unsupported)
     bouton_1_action:
       name: Action pour le Bouton 1
       description: "Choisissez l'action pour le Bouton 1."
