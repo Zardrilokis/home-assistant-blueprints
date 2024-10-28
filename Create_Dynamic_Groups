@@ -105,7 +105,6 @@ blueprint:
 trigger:
 - platform: time_pattern
   hours: /1
-
 variables:
   include_list: !input include_keywords
   exclude_list: !input exclude_keywords
@@ -126,7 +125,6 @@ action:
   data:
     object_id: !input group_id
     name: !input group_name
-											 
     entities: '{{ entities }}'
     icon: mdi:devices
     area_id: !input group_room
