@@ -1,0 +1,90 @@
+blueprint:
+  name: Create Group
+  description: '# Create Group Blueprint
+
+    This blueprint creates a group with either static or dynamic members.
+
+    '
+  domain: automation
+  input:
+    group_name:
+      name: Name to assign to the group
+      description: 'Example: All Lights'
+      default: Group Name
+      selector:
+        text:
+          multiple: false
+          multiline: false
+    group_object_id:
+      name: object_id to assign to the group
+      description: 'Example: all_lights'
+      default: group_id
+      selector:
+        text:
+          multiple: false
+          multiline: false
+    search_domain:
+      name: Dynamic Domain List
+      description: 'Domains to search. Format: List (-) of strings.'
+      default: []
+      selector:
+        object: {}
+    search_includes:
+      name: Dynamic Include List
+      description: 'Entity object ID''s to include. Format: List (-) of strings.'
+      default: []
+      selector:
+        object: {}
+    search_excludes:
+      name: Dynamic Exclude List
+      description: 'Entity object ID''s to exclude. Format: List (-) of strings.'
+      default: []
+      selector:
+        object: {}
+    entities_to_add:
+      name: Static Entities To Add
+      description: Select the entities to add to the group.
+      default: []
+      selector:
+        entity:
+          multiple: true
+    entities_to_remove:
+      name: Static Entities To Remove
+      description: Select the entities to remove from the group.
+      default: []
+      selector:
+        entity:
+          multiple: true
+  source_url: https://github.com/Zardrilokis/home-assistant-blueprints/blob/2b7d76cfa7df9750d6a68f72ac40adf799f69b50/dynamic_group.yaml
+mode: single
+max_exceeded: silent
+trigger:
+- platform: homeassistant
+  event: start
+- platform: event
+  event_type: call_service
+  event_data:
+    domain: group
+    service: reload
+variables:
+  input_group_name: !input group_name
+  input_group_group_object_id: !input group_object_id
+  domains: !input search_domain
+  includes: !input search_includes
+  excludes: !input search_excludes
+  add: !input entities_to_add
+  rem: !input entities_to_remove
+action:
+- service: homeassistant.update_entity
+  target:
+    entity_id: group.dynamic_group
+- service: group.set
+  data:
+    object_id: dynamic_group
+    name: '{{ input_group_name }}'
+    entities: '{% set include_list = includes.split(''\n'') %} {% set exclude_list
+      = excludes.split(''\n'') %} {% set domain_list = domains.split(''\n'') %} {{
+      states | selectattr(''domain'',''in'',domain_list) | map(attribute=''entity_id'')
+      | list }}
+
+      '
