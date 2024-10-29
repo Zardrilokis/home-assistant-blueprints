@@ -1,0 +1,4 @@
+action: group.remove
+metadata: {}
+data:
+  object_id: dynamic_group_name_ID # Enter here the group ID that you need to remove.
