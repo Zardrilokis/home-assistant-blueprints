@@ -55,7 +55,7 @@ blueprint:
     domains: "{{ [device_domains] if device_domains is string else device_domains }}"
     entities: "{{ states | selectattr('domain', 'in', domains) | map(attribute='entity_id') | list }}"
   action:
-    - service: group.create
+    - service: group.set
       data:
         object_id: "{{ group_id }}"
         name: "{{ group_name }}"
