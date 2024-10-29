@@ -1,0 +1,173 @@
+blueprint:
+  name: Create Dynamic Group based on automation
+  description: 'Ce blueprint crée des groupes d''équipements dynamiques, les maintient
+    à jour chaque heure,
+    permet de spécifier le nom, l''ID, et la pièce des groupes, de générer une liste
+    déroulante des types d''équipements disponibles,
+    et d''utiliser des mots-clés pour inclure ou exclure des équipements, ainsi que
+    d''ajouter des équipements manuellement.
+    '
+  domain: automation
+  input:
+    automation_id:
+      name: Automation Dynamic Group ID
+      description: L'ID de l'automation du groupe d'équipements à créer (Ne pas mettre d'espace, de majuscules ou de caractères spéciaux)
+      selector:
+        text:
+          multiline: false
+          multiple: false
+      default: automation_dynamic_group_name_id
+    automation_name:
+      name: Automation Dynamic Group Name
+      description: Le nom de l'automation du groupe d'équipements à créer
+      selector:
+        text:
+          multiline: false
+          multiple: false
+      default: Automation Dynamic Group Name
+    automation_description:
+      name: Automation Dynamic Group Description
+      description: La description de l'automation du groupe d'équipements à créer
+      selector:
+        text:
+          multiline: false
+          multiple: false
+      default: Automation Dynamic Group Description
+    automation_icon:
+      name: Automation Dynamic Group Icon
+      description: 'Icon to assign to the group. Example: mdi:lightbulb'
+      default: mdi:lightbulb
+      selector:
+        icon: {}
+    group_id:
+      name: Dynamic Group ID
+      description: L'ID du groupe d'équipements à créer
+      selector:
+        text:
+          multiline: false
+          multiple: false
+      default: dynamic_group_id
+    group_name:
+      name: Dynamic Group Name
+      description: Le nom du groupe d'équipements à créer
+      selector:
+        text:
+          multiline: false
+          multiple: false
+      default: Dynamic Group Name
+    group_icon:
+      name: Dynamic Group Icon
+      description: 'Icon to assign to the group. Example: mdi:lightbulb'
+      default: mdi:lightbulb
+      selector:
+        icon: {}
+    group_room:
+      name: Dynamic Group Room Assignment
+      description: La pièce assignée au groupe dynamique d'équipements
+      selector:
+        area:
+          multiple: false
+    device_domains:
+      name: Dynamic Domain List Available
+      description: Liste des types d'équipements disponibles (Domain)
+      selector:
+        select:
+          options:
+          - automation
+          - binary_sensor
+          - climate
+          - cover
+          - device_tracker
+          - light
+          - media_player
+          - person
+          - scene
+          - select
+          - sensor
+          - Siren
+          - stt
+          - sun
+          - switch
+          - Tag
+          - todo
+          - tts
+          - Update
+          - water
+          - Weather
+          - Zone
+          sort: true
+          custom_value: true
+          multiple: false
+      default: light
+    include_keywords:
+      name: Dynamic Include key word List
+      description: Liste de mots-clés pour inclure les équipements
+      selector:
+        text:
+          multiline: true
+          multiple: false
+      default: '- '
+    exclude_keywords:
+      name: Dynamic key word to exclude from the list
+      description: Liste de mots-clés pour exclure les équipements
+      selector:
+        text:
+          multiline: true
+          multiple: false
+      default: '- '
+    manual_include:
+      name: Add manual devices list to include
+      description: Liste des équipements à inclure manuellement
+      selector:
+        entity:
+          multiple: true
+      default: ''
+    manual_exclude:
+      name: Add manual devices list to exclude
+      description: Liste des équipements à exclure manuellement
+      selector:
+        entity:
+          multiple: true
+      default: ''
+  source_url: https://github.com/Zardrilokis/home-assistant-blueprints-Generate-Dynamic-Groups/blob/f29bd824a1a890c309a88bdbbea01fafaf7fb965/Create_Dynamic_Groups
+
+trigger:
+  - platform: time_pattern
+    hours: /1
+
+variables:
+  group_id: !input group_id
+  group_name: !input group_name
+  group_icon: !input group_icon
+  group_room: !input group_room
+  automation_id: !input automation_id
+  automation_name: !input automation_name
+  automation_description: !input automation_description
+  automation_icon: !input automation_icon
+  include_list: !input include_keywords
+  exclude_list: !input exclude_keywords
+  domains: !input device_domains
+  manual_include: !input manual_include
+  manual_exclude: !input manual_exclude
+  entities: '{{ states | selectattr(''domain'',''in'',domains.split('' '')) | map(attribute=''entity_id'') | list }}'
+
+condition:
+  condition: template
+  value_template: '{{ (include_list | trim | length == 0 or entity_id in include_list
+    | regex_findall(find=''(.*)'', ignorecase=True)) and not (exclude_list | trim
+    | length != 0 and entity_id in exclude_list | regex_findall(find=''(.*)'', ignorecase=True))
+    }}'
+
+action:
+  - service: group.set
+    data:
+      object_id: group_id
+      name: group_name
+      entities: '{{ entities }}'
+      icon: group_icon
+      area_id: group_room
+
+#object_id: automation_id
+#name: automation_name
+#description: automation_description
+#area_id: automation_icon
