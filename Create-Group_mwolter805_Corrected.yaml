@@ -1,5 +1,5 @@
 blueprint:
-  name: Create Group
+  name: Create-Group_mwolter805_Corrected.yaml
   description: "# Create Group Blueprint\n\nThis blueprint creates a group with either
     static or dynamic members. \n\nIt has two main functions to add members\n  - Dynamically
     include multiple members based on a common string in their object ID's. (```Dynamic
