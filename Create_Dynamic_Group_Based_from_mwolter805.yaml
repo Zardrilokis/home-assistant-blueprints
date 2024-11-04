@@ -1,5 +1,5 @@
 blueprint:
-  name: Create Group
+  name: Create Create_Dynamic_Group_Based_from_mwolter805
   description: '# Create Group Blueprint
 
     This blueprint creates a group with either static or dynamic members.
